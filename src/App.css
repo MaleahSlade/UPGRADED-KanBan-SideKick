@@ -1,0 +1,126 @@
+:root {
+  --pending: #6b7280;
+  --progress: #2563eb;
+  --done: #16a34a;
+  --low: #16a34a;
+  --medium: #d97706;
+  --high: #dc2626;
+  --card-bg: rgba(127, 127, 127, 0.07);
+}
+
+#header { padding: 0 16px; }
+#task-generator { padding: 0 16px 8px; }
+
+/* ---------- Form & filter controls ---------- */
+.task-form,
+.task-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  padding: 8px 16px;
+}
+
+input,
+select,
+button {
+  font: inherit;
+  font-size: 15px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text-h);
+}
+
+input:focus-visible,
+select:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+button { cursor: pointer; transition: background 0.15s, transform 0.05s, border-color 0.15s; }
+button[type='submit'] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+button[type='submit']:hover { filter: brightness(1.1); }
+button:active { transform: scale(0.96); }
+select { cursor: pointer; }
+
+/* ---------- Task list ---------- */
+.task-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  padding: 16px;
+  text-align: left;
+}
+
+.empty-message { padding: 32px; }
+
+/* ---------- Task card ---------- */
+.task-item {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-left: 6px solid var(--pending);
+  border-radius: 8px;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.task-item:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.task-item:active { transform: translateY(0); }
+
+/* Left border color = status */
+.task-item.status-pending { border-left-color: var(--pending); }
+.task-item.status-in-progress { border-left-color: var(--progress); }
+.task-item.status-completed { border-left-color: var(--done); }
+
+/* Finished tasks look muted with a struck-through title */
+.task-item.status-completed { opacity: 0.65; }
+.task-item.status-completed .task-title { text-decoration: line-through; }
+
+/* High-priority tasks that aren't done get a red outline; overdue ones too */
+.task-item.priority-high:not(.status-completed) { border-color: var(--high); border-left-color: var(--high); }
+.task-item.overdue { box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.35); }
+
+.task-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+.task-title { margin: 0; font-size: 18px; color: var(--text-h); word-break: break-word; }
+.task-description { font-size: 15px; }
+.task-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 14px; }
+.task-due { display: inline-flex; align-items: center; gap: 6px; }
+.task-actions { display: flex; justify-content: space-between; gap: 8px; margin-top: auto; }
+
+/* ---------- Badges ---------- */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+  color: #fff;
+  white-space: nowrap;
+}
+.priority-badge.priority-low { background: var(--low); }
+.priority-badge.priority-medium { background: var(--medium); }
+.priority-badge.priority-high { background: var(--high); }
+.status-badge.status-pending { background: var(--pending); }
+.status-badge.status-in-progress { background: var(--progress); }
+.status-badge.status-completed { background: var(--done); }
+.overdue-badge { background: var(--high); }
+
+/* ---------- Delete button ---------- */
+.delete-btn { color: var(--high); border-color: var(--high); }
+.delete-btn:hover { background: var(--high); color: #fff; }
