@@ -3,9 +3,11 @@
 //   task           - the single task this card shows
 //   onStatusChange - called when the user picks a new status from the dropdown
 //   onDelete       - called when the user clicks the delete button
+//   onEdit         - called when the user clicks the edit button
 
 import type { ChangeEvent } from 'react';
 import type { TaskItemProps, TaskStatus } from '../types';
+import { formatDate, isOverdue as checkOverdue } from '../utils/dates';
 
 // Human-readable labels for each status.
 const STATUS_LABELS: Record<TaskStatus, string> = {
@@ -14,22 +16,14 @@ const STATUS_LABELS: Record<TaskStatus, string> = {
   completed: 'Completed',
 };
 
-// Today's date as YYYY-MM-DD in local time, so it compares with <input type="date"> values.
-const todayString = () => {
-  const d = new Date();
-  const pad = (n: number) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-};
-
-const TaskItem = ({ task, onStatusChange, onDelete }: TaskItemProps) => {
+const TaskItem = ({ task, onStatusChange, onDelete, onEdit }: TaskItemProps) => {
   // Runs when the status dropdown changes: tell the parent WHICH task and its NEW status.
   const handleStatusChange = (e: ChangeEvent<HTMLSelectElement>) => {
     onStatusChange(task.id, e.target.value as TaskStatus);
   };
 
   // A task is overdue if it has a due date in the past and isn't finished yet.
-  const isOverdue =
-    task.dueDate !== '' && task.status !== 'completed' && task.dueDate < todayString();
+  const isOverdue = checkOverdue(task.dueDate, task.status === 'completed');
 
   // Status + priority classes drive the colors in App.css.
   const className = [
@@ -63,7 +57,7 @@ const TaskItem = ({ task, onStatusChange, onDelete }: TaskItemProps) => {
         {/* Only show the due date if one was set. */}
         {task.dueDate && (
           <span className="task-due">
-            Due: {task.dueDate}
+            Due: {formatDate(task.dueDate)}
             {isOverdue && <span className="badge overdue-badge">Overdue</span>}
           </span>
         )}
@@ -79,6 +73,14 @@ const TaskItem = ({ task, onStatusChange, onDelete }: TaskItemProps) => {
           <option value="in-progress">In progress</option>
           <option value="completed">Completed</option>
         </select>
+
+        <button
+          className="edit-btn"
+          onClick={() => onEdit(task.id)}
+          aria-label={`Edit ${task.title}`}
+        >
+          Edit
+        </button>
 
         <button
           className="delete-btn"
